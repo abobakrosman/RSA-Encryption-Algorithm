@@ -1,0 +1,95 @@
+import java.io.*;
+import java.net.*;
+import java.util.Scanner;
+public class alice {
+ public static void main(String[] args) {
+  try {
+   String a[] = new String[1]; //Reinstialize all var
+   Scanner in = new Scanner(System.in);
+   RSA rsa = new RSA();
+   int max = 50;
+   int min = 2; //for Random prime Generator
+   int p, q, n, y, e, d;
+   p = RSA.prime(max, min, 1);
+   do {
+    q = RSA.prime(max, min, 1);
+   } while (q == p);
+   n = p * q;
+   y = (p - 1) * (q - 1);
+   e = 3; //3,5,7,9,11,13,17
+   if (RSA.findGCD(e, y) == e)
+    e = 5;
+   if (e >= y | e <= 1) {
+    System.out.println("Reinstialize all , please re-run the code");
+
+    System.exit(0);
+   }
+   d = rsa.findinverse(y, e);
+   d = (int) Math.pow(-1, rsa.k) * d;
+   if (d < 0)
+    d = y + d;
+
+   if (d <= 1 || d >= y || d == e) {
+    System.out.println("Reinstialize all , please re-run the code");
+    System.exit(0);
+   }
+
+   System.out.println("\n Enter Message to be encrypt (No. input please !!)");
+   long msg = in .nextLong();
+
+   System.out.println("\np= " + p + " q= " + q + " n= " + n + " y=" + y);
+   System.out.println("(e,n) = " + "(" + e + "," + n + ")");
+   System.out.println("d = " + d);
+   long cipher = rsa.fastmodularexpon(e, n, msg);
+   long plaintext = rsa.fastmodularexpon(d, n, cipher);
+   if (msg != plaintext) {
+
+    System.out.println("Reinstialize all , please re-run the code");
+    System.exit(0);
+
+   }
+
+
+   System.out.println("");
+   System.out.println("cipher= " + cipher);
+   System.out.println();
+   System.out.println("Text= " + plaintext);
+   // System.out.println(" Encryption (8) Data "+cipher);
+   // System.out.println("Decryption Cipher  "+rsa.decryption(d,n,cipher));
+
+   /*try {
+   // Create a server socket
+   ServerSocket serverSocket = new ServerSocket(8000, 50);
+
+   // Start listening for connections on the server socket
+   Socket connectToClient = serverSocket.accept();
+   // Create an input stream to get data from the bob
+   DataInputStream input = new DataInputStream(connectToClient.getInputStream());
+
+   // Create an output stream to send data to the bob
+   DataOutputStream output = new DataOutputStream(connectToClient.getOutputStream());
+   // Continuously read from the client and process it,
+   // and send result back to the client
+
+   while (true) {
+    // Read a string from the input stream
+    String bob = input.readUTF();
+    // Display bob msg  on console
+    System.out.println("bob: " + bob);
+
+    System.out.print(">> ");
+    String msg = in.nextLine();
+    output.writeUTF(msg);
+    output.flush();
+
+   }
+  } catch (IOException ex) {
+  / System.out.println("bye bye");
+  /}
+ */
+  } catch (Exception e) {
+   System.out.println("Wrong initialise re-run the code please !  ");
+  }
+
+ } // end main
+} // end class
