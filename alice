@@ -4,7 +4,6 @@ import java.util.Scanner;
 public class alice {
  public static void main(String[] args) {
   try {
-   String a[] = new String[1]; //Reinstialize all var
    Scanner in = new Scanner(System.in);
    RSA rsa = new RSA();
    int max = 50;
@@ -16,24 +15,39 @@ public class alice {
    } while (q == p);
    n = p * q;
    y = (p - 1) * (q - 1);
-   e = 3; //3,5,7,9,11,13,17
-   if (RSA.findGCD(e, y) == e)
-    e = 5;
+   e = 3;
+   int[] sug_e = {
+    5,
+    7,
+    9,
+    11,
+    13,
+    17
+   };
+   int counter = 0;
+   while (RSA.findGCD(e, y) != 1) {
+    e = sug_e[counter];
+    counter++;
+   }
    if (e >= y | e <= 1) {
-    System.out.println("Reinstialize all , please re-run the code");
+    System.out.println("e >= yn or e<=1 Reinstialize all , please re-run the code");
 
     System.exit(0);
    }
    d = rsa.findinverse(y, e);
-   d = (int) Math.pow(-1, rsa.k) * d;
+   d = (int) Math.pow(-1, rsa.k + 1) * d;
    if (d < 0)
     d = y + d;
 
-   if (d <= 1 || d >= y || d == e) {
+   if (d <= 1 || d >= y) {
     System.out.println("Reinstialize all , please re-run the code");
     System.exit(0);
    }
 
+   if (d == e) {
+    System.out.println("the selected p,q return d == e instialize all , please re-run the code");
+    System.exit(0);
+   }
    System.out.println("\n Enter Message to be encrypt (No. input please !!)");
    long msg = in .nextLong();
 
@@ -41,10 +55,11 @@ public class alice {
    System.out.println("(e,n) = " + "(" + e + "," + n + ")");
    System.out.println("d = " + d);
    long cipher = rsa.fastmodularexpon(e, n, msg);
-   long plaintext = rsa.fastmodularexpon(d, n, cipher);
+   //long plaintext = rsa.fastmodularexpon(d, n, cipher);
+   System.out.println("CRT Calculation");
+   long plaintext = rsa.crt(p, q, d, cipher);
    if (msg != plaintext) {
-
-    System.out.println("Reinstialize all , please re-run the code");
+    System.out.println("Error occure  , please re-run the code");
     System.exit(0);
 
    }
