@@ -51,10 +51,11 @@ class RSA {
  public static int findinverse(int number1, int number2) { //  Extended Euclidean algorithm
   //base case
 
-  k++;
+
   if (number2 == 0) {
    return number1;
   }
+  k++;
   int r = number1 / number2;
   int temp = y2;
   y2 = (y2 * r) + y1;
@@ -64,6 +65,40 @@ class RSA {
 
   return y1;
  }
+ public static long crt(int p, int q, int d, long c) { // Chinese remainder theorem
+  int n = p * q;
+  int mod = d % (p - 1);
+  long mp = fastmodularexpon(mod, p, c);
+  mod = d % (q - 1);
+  long mq = fastmodularexpon(mod, q, c);
+  System.out.println("MP = " + mp + "   Mq = " + mq);
+  y2 = 1;
+  y1 = 0;
+  k = 0;
+  int yq = findinverse(p, q);
+  System.out.println("K =" + k);
+  yq = (int)(Math.pow(-1, k + 1) * yq);
+  y2 = 1;
+  y1 = 0;
+  k = 0;
+  int yp = findinverse(q, p);
+  if (yq > 0)
+   yp = yp * -1;
+  y2 = 1;
+  y1 = 0;
+  k = 0;
+
+  long m = (mp * yq * q) + (mq * yp * p);
+  m = m % n;
+
+  if (m < 0)
+   m = m + n;
+  System.out.println("yp = " + yp + "  yq = " + yq + "  M = " + m);
+  return m;
+
+
+ }
+
 
  public static long fastmodularexpon(long ee, long n, long m) {
 
@@ -102,7 +137,7 @@ class RSA {
    System.out.println(modu[j]);
   for (int x = 0; x < modu.length; x++)
    sum = sum * modu[x];
-
+  System.out.println();
   return (long) sum % n;
  } //end encryption Method
 
